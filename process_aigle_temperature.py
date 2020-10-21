@@ -22,10 +22,16 @@ temperatures_aigle = pd.read_csv(
 )
 
 
+def extract_temperatures(year, month=0):
+    '''
+    Will return a ndarray of all temperatures for the period given
+    A) extract_temperatures(year)
+       -> from year-01-01 - year-12-31
+    B) extract_temperatures(year, month)
+       -> from year-month-01 - year-month-last_day
+    '''
+    pass
+
+
 if __name__ == '__main__':
-
-    start_date = '1981-01-01'
-    end_date = '1981-12-31'
-    temperatures = temperatures_aigle[start_date:end_date].values
-
-    print(temperatures)
+    print(help(extract_temperatures))

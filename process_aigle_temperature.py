@@ -11,11 +11,26 @@ This Python script will
 
 import numpy as np
 import pandas as pd
+from matplotlib import pyplot as plt
 
 SOURCE_FILE = 'aigle_1980-12-31_2019-07-09.csv'
 NB_DAYS_PER_MONTH = (0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 OBSERVED_YEARS = np.arange(1981, 2012, 10)
 MONTHS = np.arange(1, 13)
+MONTHS_LABELS = [
+    'jan', 'feb', 'mar', 'apr', 'may', 'jun',
+    'jul', 'aug', 'sep', 'oct', 'nov', 'dec'
+]
+COLORS = {
+    1981: 'blue',
+    1991: 'green',
+    2001: 'orange',
+    2011: 'red',
+}
+PNG_FILENAME = 'aigle_temperature_means.png'
+GRAPH_TITLE = 'Aigle - Average temperature per month'
+GRAPH_X_LABEL = 'months'
+GRAPH_Y_LABEL = 'mean temperature'
 
 temperatures_aigle = pd.read_csv(
     SOURCE_FILE,
@@ -48,6 +63,8 @@ def extract_temperatures(year, month=0):
 
 
 if __name__ == '__main__':
+    plt.figure(figsize=(8, 6), dpi=120)
+
     for year in OBSERVED_YEARS:
         year_temperatures = extract_temperatures(year)
         year_mean = np.nanmean(year_temperatures)
@@ -58,6 +75,18 @@ if __name__ == '__main__':
             month_temperatures = extract_temperatures(year, month)
             monthly_mean_values[month-1] = np.nanmean(month_temperatures)
 
-        print(label)
-        print(monthly_mean_values)
-        print()
+        plt.plot(
+            MONTHS, monthly_mean_values,
+            color=COLORS[year], label=label
+        )
+
+    ax = plt.gca()
+
+    plt.title(GRAPH_TITLE)
+    plt.legend()
+    ax.set_xlabel(GRAPH_X_LABEL)
+    ax.set_ylabel(GRAPH_Y_LABEL)
+
+    plt.xticks(MONTHS, MONTHS_LABELS)
+    plt.grid(b=True, which='major', axis='y')
+    plt.savefig(PNG_FILENAME)

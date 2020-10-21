@@ -14,6 +14,8 @@ import pandas as pd
 
 SOURCE_FILE = 'aigle_1980-12-31_2019-07-09.csv'
 NB_DAYS_PER_MONTH = (0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+OBSERVED_YEARS = np.arange(1981, 2012, 10)
+MONTHS = np.arange(1, 13)
 
 temperatures_aigle = pd.read_csv(
     SOURCE_FILE,
@@ -46,21 +48,16 @@ def extract_temperatures(year, month=0):
 
 
 if __name__ == '__main__':
-    year_1981 = extract_temperatures(1981)
-    print('Year 1981 has %s values' % len(year_1981))
+    for year in OBSERVED_YEARS:
+        year_temperatures = extract_temperatures(year)
+        year_mean = np.nanmean(year_temperatures)
+        label = '%s (mean = %.2f°C)' % (year, year_mean)
 
-    jan_1981 = extract_temperatures(1981, 1)
-    print('January 1981 has %s values' % len(jan_1981))
+        monthly_mean_values = np.zeros_like(MONTHS, dtype=np.float64)
+        for month in MONTHS:
+            month_temperatures = extract_temperatures(year, month)
+            monthly_mean_values[month-1] = np.nanmean(month_temperatures)
 
-    feb_1981 = extract_temperatures(1981, 2)
-    print('February 1981 has %s values' % len(feb_1981))
-
-    year_1984 = extract_temperatures(1984)
-    print('Year 1984 has %s values' % len(year_1984))
-
-    feb_1984 = extract_temperatures(1984, 2)
-    print('February 1984 has %s values' % len(feb_1984))
-
-    apr_2001 = extract_temperatures(2001, 4)
-    print('April 2001 has %s values' % len(apr_2001))
-    print(apr_2001)
+        print(label)
+        print(monthly_mean_values)
+        print()
